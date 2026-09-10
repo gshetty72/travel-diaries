@@ -279,9 +279,13 @@
       let isAnimating = false;
 
       function setup() {
-        const rect = img.getBoundingClientRect();
-        W = canvas.width  = Math.round(rect.width);
-        H = canvas.height = Math.round(rect.height);
+        // Use clientHeight (CSS layout, transform-free) + intrinsic aspect ratio.
+        // getBoundingClientRect() picks up any mid-flight CSS scale animations on
+        // ancestor elements, causing W/H to be slightly wrong on first network load.
+        H = img.clientHeight || 499;
+        W = Math.round(img.naturalWidth * (H / img.naturalHeight));
+        canvas.width  = W;
+        canvas.height = H;
         buildGrayCache();
         restoreGray();
       }
